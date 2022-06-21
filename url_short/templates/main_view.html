@@ -1,0 +1,141 @@
+{% extends 'url_short/shortner_template.html' %}
+{% load static %}
+{%block body%}
+
+<table>
+
+    <thread>
+        <tr>
+            <th> # </th>
+            <th> Short Link</th>
+            <th> Windows Link</th>
+            <th> Android Link</th>
+            <th> Mac Link</th>
+            <th> IOS Link</th>
+            <th> Other Link</th>
+            <th> Creation Time</th>
+            <th> Action</th>
+        </tr>
+    </thread>
+        <tbody>
+            {%for link in links%}
+            <tr>
+                <td> {{link.id}}</td>
+                <td>{{link.shortURL}}</td>
+                <td>{{link.windowsURL}}</td>
+                <td>{{link.androidURL}}</td>
+                <td>{{link.macURL}}</td>
+                <td>{{link.iosURL}}</td>
+                <td>{{link.otherURL}}</td>
+                <td> {{link.created_time}}</td>
+                <td>
+                    <a href="{% url 'urls:edit' idd=link.id %}"> <img src="{% static 'media/edit_icon.svg' %}" height="20" alt ='edit'> </a>      
+                    <a href="{% url 'urls:delete' idd=link.id %}"> <img src="{% static 'media/delete_icon.svg' %}" height="20" alt='delete'> </a>
+                </td>
+
+            </tr>
+            {%endfor%}
+        </tbody>
+
+</table>
+<br><br>
+<a href="{% url 'urls:create'%}" > <button> Create new record</button> </a>
+
+<br>
+<hr>
+<br>
+
+<table>
+
+    <thread>
+        <tr>
+            <th> #</th>
+            <th> ip </th>
+            <th> browser_type </th>
+            <th> browser_version</th>
+            <th> os_type </th>
+            <th> os_version</th>
+            <th> device_family</th>
+            <th> incoming link </th>
+            <th> Clicking Time</th>
+
+            
+        </tr>
+    </thread>
+        <tbody>
+            {%for pinfo in pythonInfo%}
+            <tr>
+                <td>{{pinfo.id}}</td>
+                <td>{{pinfo.ip}}</td>
+                <td>{{pinfo.browser_type}}</td>
+                <td>{{pinfo.browser_version}}</td>
+                <td>{{pinfo.os_type}}</td>
+                <td>{{pinfo.os_version}}</td>
+                <td>{{pinfo.device_family}}</td>
+                <td>{{pinfo.incoming_link.shortURL}}</td>
+                <td>{{pinfo.created_time}}</td>
+            </tr>
+            {%endfor%}
+        </tbody>
+
+</table>
+
+<br>
+<hr>
+<br>
+
+
+<table>
+
+    <thread>
+        <tr>
+            <th> #</th>
+            <th> Browser Name </th>
+            <th> Browser Version </th>
+            <th> Browser Language</th>
+            <th> Cookies Enabled </th>
+            <th> Operating System</th>
+            <th> Useragent Header</th>
+            <th> UTC TimeZone</th> 
+            <th> TZ Place</th>
+            <th> Screen Size</th>
+            <th> Battery Level</th>
+            <th> PreTable Connection </th>
+            <th> incoming link </th>
+            <th> Clicking Time</th>
+
+            
+        </tr>
+    </thread>
+        <tbody>
+            {%for jinfo in jsInfo%}
+            <tr>
+                <td>{{jinfo.id}}</td>
+                <td>{{jinfo.browser_codeName}}</td>
+                <td>{{jinfo.browser_version}}</td>
+                <td>{{jinfo.browser_language}}</td>
+                <td>{{jinfo.cookies_enabled}}</td>
+                <td>{{jinfo.platform}}</td>
+                <td>{{jinfo.user_agent_header}}</td>
+                <td>{{jinfo.timezone_utc}}</td>
+                <td>{{jinfo.timezone_place}}</td>
+                <td>{{jinfo.screen_size}}</td>
+                <td>{{jinfo.battery_level}}</td>
+
+                <td>{{jinfo.pyID.id}} </td>
+                {% comment %} <td>{{jinfo.incoming_link.shortURL}}</td> {% endcomment %}
+
+                <td>{{jinfo.pyID.incoming_link.shortURL}}</td>
+                <td>{{jinfo.created_time}}</td>
+            </tr>
+            {%endfor%}
+        </tbody>
+
+</table>
+
+
+
+
+
+
+{%endblock%}

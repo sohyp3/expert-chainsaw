@@ -1,0 +1,48 @@
+{% extends 'url_short/shortner_template.html' %}
+
+{%block body%}
+
+<form method = 'POST' action="{% url 'urls:update' idd=link.id %}"> 
+    {%csrf_token%}
+    <h3>Update Detaiols</h3>
+    <br>
+    <p> Short Link </p>
+    <input type ='text' name ="short_url", value = '{{link.shortURL}}' required/> 
+    
+    <br>
+    <p> Windows Link </p>
+    <input type ='url' name ="windows_url", value = '{{link.windowsURL}}' required/> 
+
+    <br>
+    <p> Android Link </p>
+    <input type ='url' name ="android_url", value = '{{link.androidURL}}' required/> 
+
+    <br>
+    <p> Mac Link </p>
+    <input type ='url' name ="mac_url", value = '{{link.macURL}}'required/> 
+
+    <br>
+    <p> IOS Link </p>
+    <input type ='url' name ="ios_url", value = '{{link.iosURL}}'required/> 
+
+    <br>
+    <p> Other Link </p>
+    <input type ='url' name ="other_url", value = '{{link.otherURL}}'required/> 
+    <br><br><br>
+    <button type='submit' id = 'submit-btn'>Update</button>
+</form> 
+<br> 
+<a href="{% url 'urls:view'%}"> <button > Cancel</button> </a>
+
+
+<script>
+    addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          document.getElementById("submit-btn").click();
+        }
+      });
+      </script>
+
+
+{%endblock%}

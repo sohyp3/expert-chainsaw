@@ -1,0 +1,57 @@
+{% extends 'url_short/shortner_template.html' %}
+
+{%block body%}
+
+<h1>URL shortner </h1>
+
+<script>
+    function control_field(){
+        var checked = document.getElementById('chustom_box').checked;
+        if (checked){
+            document.getElementById('id_shortURL').disabled = false
+        }
+        else{
+            document.getElementById('id_shortURL').disabled =true
+            document.getElementById('id_shortURL').value = ''
+        }
+    
+    }
+    </script>
+
+
+
+    <form action = "{% url 'urls:create' %}" method = 'POST'>
+        {% csrf_token %}
+    
+        {{form}}
+            <br> 
+            <hr>
+    
+ <label for="custom_short_url">Custom? </label>
+    <input type='checkbox' name = 'custom_cb' id = 'chustom_box' onchange="control_field()" checked>
+    <input type="text" id="id_shortURL" name="shortURL"><br>
+         
+    <input type='submit' id ='submit-input'> 
+
+    </form>
+
+<h3> {{message}} </h3>
+
+
+
+<a href="{% url 'urls:view'%}"> <button> Show records</button> </a>
+
+
+<script>
+    addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          document.getElementById("submit-input").click();
+        }
+      });
+      </script>
+
+
+
+{%endblock%}
+
