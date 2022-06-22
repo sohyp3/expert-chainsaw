@@ -18,8 +18,6 @@
     }
     </script>
 
-
-
     <form action = "{% url 'urls:create' %}" method = 'POST'>
         {% csrf_token %}
     
@@ -29,7 +27,7 @@
     
  <label for="custom_short_url">Custom? </label>
     <input type='checkbox' name = 'custom_cb' id = 'chustom_box' onchange="control_field()" checked>
-    <input type="text" id="id_shortURL" name="shortURL"><br>
+    <input type="text" id="id_shortURL" name="shortURL" autocomplete='off'><br>
          
     <input type='submit' id ='submit-input'> 
 
@@ -51,7 +49,12 @@
       });
       </script>
 
-
-
 {%endblock%}
 
+
+{% if exists %}
+<script> 
+    alert('Short URL already Exist Use different one')
+</script>
+
+{% endif %}

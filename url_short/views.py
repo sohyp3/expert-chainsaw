@@ -13,7 +13,7 @@ from .models import linksModel, pythonUseragentModel, jsUseragentModel
 
 def create(request):
     short = ''
-
+    already_exists = False
         # Reciving the POST request
 
     if request.method =='POST':
@@ -54,12 +54,18 @@ def create(request):
                 save_to_db.save()
             else: 
                 short = 'Already There'
+                already_exists = True
 
         else:
             short = 'an error happened!'
             form = linkForm()
 
-    return render(request, "url_short/create_url.html", {'form':linkForm(),'message':short})
+    context = {
+        'form':linkForm(),
+        'message':short,
+        'exists':already_exists
+    }
+    return render(request, "url_short/create_url.html", context)
     
 
 def view(request): 
