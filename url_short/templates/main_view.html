@@ -4,7 +4,14 @@
 {%block body%}
 
 <table>
-
+    <br>
+    <form id='search-form' autocomplete='off'>
+        <input type='text'id='search-input' name ='srchLink' />
+        <button type'submit'> search </button> 
+        <button><a href="{% url 'urls:view'%}">clear</a></button>
+    </form>
+    <p> {{searchingLink}}</p
+    <br> <br>
     <thread>
         <tr>
             <th> # </th>
@@ -47,6 +54,15 @@
 <br>
 
 <table>
+    <br>
+    <form id='search-form' autocomplete='off'>
+        <input type='text'id='search-input' name ='srchPy' />
+        <button type'submit'> search </button> 
+        <button><a href="{% url 'urls:view'%}">clear</a></button>
+    </form>
+    <p> {{searchingPy}}</p
+
+    <br> <br>
 
     <thread>
         <tr>
@@ -87,7 +103,15 @@
 
 
 <table>
+    <br>
+    <form id='search-form' autocomplete='off'>
+        <input type='text'id='search-input' name ='srchJs' />
+        <button type'submit'> search </button> 
+        <button><a href="{% url 'urls:view'%}">clear</a></button>
+    </form>
+    <p> {{searchingJs}}</p
 
+    <br> <br>
     <thread>
         <tr>
             <th> #</th>

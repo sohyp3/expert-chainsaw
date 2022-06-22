@@ -12,6 +12,8 @@ with relational table
 `python3 manage.py makemigrations url_short`
 `python3 mange.py migrate`
 
+*the links name are dynamic in exception of the on in* `url_short/static/js/getinfo.js line:39` 
+
 ### to do:
 
 - custom error pages

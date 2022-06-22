@@ -58,11 +58,53 @@ def create(request):
     
 
 def view(request): 
+
+    searchingLink=''
+    searchingPy = '' 
+    searchingJs = ''
+
+    if 'srchLink' in request.GET:
+        srchLink = request.GET['srchLink']
+        multiSearchLink = Q(Q(shortURL__icontains=srchLink) | Q(created_time__icontains=srchLink))
+        linkData = linksModel.objects.filter(multiSearchLink)
+
+        searchingLink = 'Searching... Clear the fliter for all of the results'        
+
+    else:
+        linkData = linksModel.objects.all()
+    
+
+
+    if 'srchPy' in request.GET:
+        srchPy = request.GET['srchPy']
+        multiSearchPy = Q(Q(ip__icontains=srchPy) | Q(os_type__icontains=srchPy))
+        pyData = pythonUseragentModel.objects.filter(multiSearchPy)
+        searchingPy = 'Searching... Clear the fliter for all of the results'
+
+    else:
+        pyData = pythonUseragentModel.objects.all()
+
+    
+    if 'srchJs' in request.GET:
+        srchJs = request.GET['srchJs']
+        multiSearchJs = Q(Q(browser_version__icontains=srchJs))
+        jsData = jsUseragentModel.objects.filter(multiSearchJs)
+        searchingJs = 'Searching... Clear the fliter for all of the results'
+
+    else:
+        jsData = jsUseragentModel.objects.all()
+
+    
+
     context={
-        'links': linksModel.objects.all(),
-        'pythonInfo':pythonUseragentModel.objects.all(),
-        'jsInfo':jsUseragentModel.objects.all()
+        'links': linkData,
+        'pythonInfo':pyData,
+        'jsInfo':jsData,
+        'searchingLink':searchingLink,
+        'searchingPy':searchingPy,
+        'searchingJs':searchingJs,
     }
+    
     return render(request, "main_view.html",context) 
 
    
@@ -113,7 +155,6 @@ def update(request,idd):
 
         return redirect('/urls/view')
     return render(request,'url_short/edit_url.html',{'link':link})
-
 
 def delete(request,idd):
     link = linksModel.objects.get(id=idd)
@@ -176,7 +217,6 @@ def create_token():
     token_size = 5
     letters = string.ascii_letters
     return "".join (random.choice(letters)for i in range (token_size))
-
 
 
 def receive_js(request):

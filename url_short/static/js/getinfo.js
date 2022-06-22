@@ -36,7 +36,7 @@ function getData()
     
     $.ajax({
         type: "POST",
-        url: "/urls/receive",
+        url: "/receive",
         enctype: 'multipart/form-data',
         data : formdata,
     
