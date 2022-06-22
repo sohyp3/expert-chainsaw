@@ -66,6 +66,7 @@ def create(request):
     }
     return render(request, "url_short/create_url.html", context)
     
+   # nice !
 
 def view(request): 
 
@@ -118,7 +119,6 @@ def view(request):
     return render(request, "main_view.html",context) 
 
    
-   # nice !
 
 # idd is id
 def edit(request,idd):
