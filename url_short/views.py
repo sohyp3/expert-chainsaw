@@ -173,8 +173,6 @@ def create_token():
 
 def receive_js(request):
     form = jsUseragentForm(request.POST or None)
-    data = {}
-    data['status'] ='f'
 
     if is_ajax(request = request):
         if form.is_valid():
@@ -198,7 +196,6 @@ def receive_js(request):
 
             save_to_db = jsUseragentModel(browser_codeName=browser_codeName,browser_version=browser_version,browser_language=browser_language,cookies_enabled=cookies_enabled,platform=platform,user_agent_header=user_agent_header,timezone_utc=timezone_utc,timezone_place=timezone_place,screen_size=screen_size,battery_level=battery_level,pyID=pyinfo)
             save_to_db.save()
-            data['status'] ='ok'
             return JsonResponse(data)
     return JsonResponse(data)
 
