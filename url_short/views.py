@@ -11,9 +11,11 @@ from .models import linksModel, pythonUseragentModel, jsUseragentModel
 
 
 
-# Reciving the POST request
 def create(request):
     short = ''
+
+        # Reciving the POST request
+
     if request.method =='POST':
         form = linkForm(request.POST)
         if form.is_valid():
@@ -54,11 +56,18 @@ def create(request):
 
     return render(request, "url_short/create_url.html", {'form':linkForm(),'message':short})
     
-# create, view, edit, update and delete functions for handling with the links
 
 def view(request): 
-    return render(request, "main_view.html",{'links': linksModel.objects.all(),'pythonInfo':pythonUseragentModel.objects.all(),'jsInfo':jsUseragentModel.objects.all(),})
-    
+    context={
+        'links': linksModel.objects.all(),
+        'pythonInfo':pythonUseragentModel.objects.all(),
+        'jsInfo':jsUseragentModel.objects.all()
+    }
+    return render(request, "main_view.html",context) 
+
+   
+   # nice !
+
 # idd is id
 def edit(request,idd):
     link = linksModel.objects.get(id=idd)
@@ -67,7 +76,6 @@ def edit(request,idd):
 def update(request,idd):
     link = linksModel.objects.get(id=idd)
     form = linkForm(request.POST,instance=link)
-   # nice !
     if form.is_valid():
         shortie = request.POST.get('short_url')
         windows = request.POST.get('windows_url')
