@@ -14,8 +14,3 @@ with relational table
 
 *the links name are dynamic in exception of the on in* `url_short/static/js/getinfo.js line:39` 
 
-### to do:
-
-- custom error pages
-- search
-- delete for each entry

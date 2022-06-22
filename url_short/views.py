@@ -27,28 +27,33 @@ def create(request):
             short = request.POST.get('shortURL')
 
             # to not have an empty field saved to db
+            
+            shortFromDB = linksModel.objects.filter(shortURL=short).count()
+            print(shortFromDB)
+            if shortFromDB == 0:
+                if short == "" or short == None:
+                    short = create_token()
 
-            if short == "" or short == None:
-                short = create_token()
-
-            if other == '' or other ==' ':
-                other = 'https://google.com'
+                if other == '' or other ==' ':  
+                    other = 'https://google.com'
+                    
+                if android == '':
+                    android = other
                 
-            if android == '':
-                android = other
-            
-            if mac == '':
-                mac = other
-            
-            if ios == '':
-                ios = other
+                if mac == '':
+                    mac = other
+                
+                if ios == '':
+                    ios = other
 
-            if windows =='':
-                windows = other
-            
+                if windows =='':
+                    windows = other
+                
 
-            save_to_db = linksModel(windowsURL=windows,shortURL=short,androidURL=android,macURL=mac,iosURL=ios,otherURL=other)
-            save_to_db.save()
+                save_to_db = linksModel(windowsURL=windows,shortURL=short,androidURL=android,macURL=mac,iosURL=ios,otherURL=other)
+                save_to_db.save()
+            else: 
+                short = 'Already There'
 
         else:
             short = 'an error happened!'
@@ -153,13 +158,13 @@ def update(request,idd):
 
         link.save()
 
-        return redirect('/urls/view')
+        return redirect('urls:view')
     return render(request,'url_short/edit_url.html',{'link':link})
 
 def delete(request,idd):
     link = linksModel.objects.get(id=idd)
     link.delete()
-    return redirect('/urls/view')
+    return redirect('urls:view')
 
 
 def redirector(request,token):
@@ -250,18 +255,3 @@ def receive_js(request):
 
 def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
-
-
-def search(request):
-    if 'q' in request.GET:
-        q = request.GET['q']
-        multiSearch = Q(Q(shortURL__icontains=q) | Q(otherURL__icontains=q))
-        data = linksModel.objects.filter(multiSearch)
-
-    else:
-        data = linksModel.objects.all()
-    
-    context={
-        'links':data
-    }
-    return render(request,'search.html',context)
