@@ -26,14 +26,13 @@ def create(request):
             other = form.cleaned_data['otherURL']
             short = request.POST.get('shortURL')
 
-            # to not have an empty field saved to db
             
             shortFromDB = linksModel.objects.filter(shortURL=short).count()
-            print(shortFromDB)
             if shortFromDB == 0:
                 if short == "" or short == None:
                     short = create_token()
 
+            # to not have an empty field saved to db
                 if other == '' or other ==' ':  
                     other = 'https://google.com'
                     
