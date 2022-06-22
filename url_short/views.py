@@ -4,6 +4,7 @@ from django_user_agents.utils import get_user_agent
 import random, string
 
 from django.http import JsonResponse
+from django.db.models import Q
 
 from .forms import linkForm, jsUseragentForm
 from .models import linksModel, pythonUseragentModel, jsUseragentModel
@@ -55,8 +56,8 @@ def create(request):
     
 # create, view, edit, update and delete functions for handling with the links
 
-def view(request):
-    return render(request, "main_view.html",{'links': linksModel.objects.all(),'pythonInfo':pythonUseragentModel.objects.all(),'jsInfo':jsUseragentModel.objects.all()})
+def view(request): 
+    return render(request, "main_view.html",{'links': linksModel.objects.all(),'pythonInfo':pythonUseragentModel.objects.all(),'jsInfo':jsUseragentModel.objects.all(),})
     
 # idd is id
 def edit(request,idd):
@@ -204,3 +205,18 @@ def receive_js(request):
 
 def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+
+
+def search(request):
+    if 'q' in request.GET:
+        q = request.GET['q']
+        multiSearch = Q(Q(shortURL__icontains=q) | Q(otherURL__icontains=q))
+        data = linksModel.objects.filter(multiSearch)
+
+    else:
+        data = linksModel.objects.all()
+    
+    context={
+        'links':data
+    }
+    return render(request,'search.html',context)
