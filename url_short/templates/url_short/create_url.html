@@ -1,8 +1,16 @@
 {% extends 'url_short/shortner_template.html' %}
 
 {%block body%}
-
 <h1>URL shortner </h1>
+
+
+{% if exists %}
+<script> 
+    alert('Short URL already Exist Use different one')
+</script>
+{% endif %}
+
+
 
 <script>
     function control_field(){
@@ -50,11 +58,3 @@
       </script>
 
 {%endblock%}
-
-
-{% if exists %}
-<script> 
-    alert('Short URL already Exist Use different one')
-</script>
-
-{% endif %}

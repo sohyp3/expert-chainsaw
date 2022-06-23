@@ -26,11 +26,13 @@ def create(request):
             other = form.cleaned_data['otherURL']
             short = request.POST.get('shortURL')
 
-            
-            shortFromDB = linksModel.objects.filter(shortURL=short).count()
-            if shortFromDB == 0:
+        
+            if linksModel.objects.filter(shortURL=short).count() == 0:
+
                 if short == "" or short == None:
                     short = create_token()
+                    if linksModel.objects.filter(shortURL=short).count() != 0:
+                        short = create_token()
 
             # to not have an empty field saved to db
                 if other == '' or other ==' ':  
@@ -57,7 +59,7 @@ def create(request):
 
         else:
             short = 'an error happened!'
-            form = linkForm()
+            # form = linkForm()
 
     context = {
         'form':linkForm(),
@@ -128,6 +130,9 @@ def edit(request,idd):
 def update(request,idd):
     link = linksModel.objects.get(id=idd)
     form = linkForm(request.POST,instance=link)
+    msg = ''
+    already_exists = False
+
     if form.is_valid():
         shortie = request.POST.get('short_url')
         windows = request.POST.get('windows_url')
@@ -136,35 +141,48 @@ def update(request,idd):
         ios = request.POST.get('ios_url')
         other = request.POST.get('other_url')
 
-        if other == '' or other ==' ':
-            other = 'https://google.com'
+
+        if linksModel.objects.filter(shortURL=shortie).count() == 0 or shortie == link.shortURL:
+            if other == '' or other ==' ':
+                other = 'https://google.com'
+                
+            if android == '':
+                android = other
             
-        if android == '':
-            android = other
-        
-        if mac == '':
-            mac = other
-        
-        if ios == '':
-            ios = other
-
-        if windows =='':
-            windows = other
+            if mac == '':
+                mac = other
             
-        if shortie == "" or shortie == ' ':
-            shortie = link.shortURL
+            if ios == '':
+                ios = other
 
-        link.shortURL = shortie
-        link.windowsURL = windows
-        link.androidURL = android
-        link.macURL = mac
-        link.iosURL = ios
-        link.otherURL = other
+            if windows =='':
+                windows = other
+                
+            if shortie == "" or shortie == ' ':
+                shortie = link.shortURL
 
-        link.save()
 
-        return redirect('urls:view')
-    return render(request,'url_short/edit_url.html',{'link':link})
+            link.shortURL = shortie
+            link.windowsURL = windows
+            link.androidURL = android
+            link.macURL = mac
+            link.iosURL = ios
+            link.otherURL = other
+
+            link.save()
+            return redirect('urls:view')
+        
+        else:
+            msg = 'already there'
+            already_exists = True
+            
+    context = {
+        'link':link,
+        'msg' : msg,
+        'exists' : already_exists,
+    }
+
+    return render(request,'url_short/edit_url.html',context)
 
 def delete(request,idd):
     link = linksModel.objects.get(id=idd)
@@ -254,8 +272,8 @@ def receive_js(request):
 
             save_to_db = jsUseragentModel(browser_codeName=browser_codeName,browser_version=browser_version,browser_language=browser_language,cookies_enabled=cookies_enabled,platform=platform,user_agent_header=user_agent_header,timezone_utc=timezone_utc,timezone_place=timezone_place,screen_size=screen_size,battery_level=battery_level,pyID=pyinfo)
             save_to_db.save()
-            return JsonResponse(data)
-    return JsonResponse(data)
+            return "" 
+        return ""
 
 
 def is_ajax(request):

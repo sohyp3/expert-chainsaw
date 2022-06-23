@@ -2,14 +2,23 @@
 
 {%block body%}
 
+
+{% if exists %}
+<script> 
+    alert('Short URL already Exist Use different one')
+</script>
+{% endif %}
+
+
+
 <form method = 'POST' action="{% url 'urls:update' idd=link.id %}"> 
     {%csrf_token%}
     <h3>Update Detaiols</h3>
     <br>
     <p> Short Link </p>
     <input type ='text' name ="short_url", value = '{{link.shortURL}}' required/> 
-    
-    <br>
+    <p>{{msg}}</p>
+
     <p> Windows Link </p>
     <input type ='url' name ="windows_url", value = '{{link.windowsURL}}' required/> 
 
