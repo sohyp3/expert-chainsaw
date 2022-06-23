@@ -26,6 +26,7 @@ def create(request):
             mac = form.cleaned_data['macURL']
             ios = form.cleaned_data['iosURL']
             other = form.cleaned_data['otherURL']
+            notes = form.cleaned_data['notes']
             short = request.POST.get('shortURL')
 
         
@@ -52,8 +53,8 @@ def create(request):
                 if windows =='':
                     windows = other
                 
-
-                save_to_db = linksModel(windowsURL=windows,shortURL=short,androidURL=android,macURL=mac,iosURL=ios,otherURL=other)
+                
+                save_to_db = linksModel(windowsURL=windows,shortURL=short,androidURL=android,macURL=mac,iosURL=ios,otherURL=other,notes=notes)
                 save_to_db.save()
             else: 
                 short = 'Already There'
@@ -61,7 +62,6 @@ def create(request):
 
         else:
             short = 'an error happened!'
-            # form = linkForm()
 
     context = {
         'form':linkForm(),
@@ -80,7 +80,7 @@ def view(request):
 
     if 'srchLink' in request.GET:
         srchLink = request.GET['srchLink']
-        multiSearchLink = Q(Q(shortURL__icontains=srchLink) | Q(created_time__icontains=srchLink))
+        multiSearchLink = Q(Q(shortURL__icontains=srchLink) | Q(created_time__icontains=srchLink) | Q(notes__icontains=srchLink))
         linkData = linksModel.objects.filter(multiSearchLink)
 
         searchingLink = 'Searching... Clear the fliter for all of the results'        
@@ -142,6 +142,7 @@ def update(request,idd):
         mac = request.POST.get('mac_url')
         ios = request.POST.get('ios_url')
         other = request.POST.get('other_url')
+        notes = request.POST.get('notes')
 
 
         if linksModel.objects.filter(shortURL=shortie).count() == 0 or shortie == link.shortURL:
@@ -177,6 +178,8 @@ def update(request,idd):
         else:
             msg = 'already there'
             already_exists = True
+            # return redirect('urls:view')
+            
 
     context = {
         'link':link,
@@ -300,9 +303,9 @@ def export(request):
     response = HttpResponse(content_type='text/csv')
     writer = csv.writer(response)
 
-    writer.writerow(['id','shortURL','windowsURL','macURL','androidURL','iosURL','otherURL','created_time'])
+    writer.writerow(['id','shortURL','windowsURL','macURL','androidURL','iosURL','otherURL','created_time','notes'])
     for link in linkData:
-        writer.writerow([link.id, link.shortURL,link.windowsURL,link.macURL,link.androidURL,link.iosURL,link.otherURL,link.created_time])
+        writer.writerow([link.id, link.shortURL,link.windowsURL,link.macURL,link.androidURL,link.iosURL,link.otherURL,link.created_time,link.notes])
 
 
     writer.writerow(['','','','','','','','','','','','','','']) #14

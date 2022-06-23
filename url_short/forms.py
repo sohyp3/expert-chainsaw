@@ -4,7 +4,7 @@ from .models import linksModel, jsUseragentModel
 class linkForm(forms.ModelForm):
     class Meta:
         model = linksModel
-        fields = ['windowsURL','macURL','androidURL','iosURL','otherURL',]
+        fields = ['windowsURL','macURL','androidURL','iosURL','otherURL','notes']
 
 
 class jsUseragentForm(forms.ModelForm):

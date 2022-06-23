@@ -7,7 +7,8 @@ class linksModel(models.Model):
     androidURL = models.URLField("Android", blank= True)
     iosURL = models.URLField("IOS", blank= True)
     otherURL = models.URLField("Others", blank= True)
-    created_time = models.DateTimeField(auto_now_add=True)
+    created_time = models.DateTimeField(auto_now=True)
+    notes = models.CharField(max_length=500,blank=True)
 
     def __str__(self):
           return f'short url : {self.shortURL} \nwindows link {self.windowsURL}\nandroid link {self.androidURL}\nmac link {self.macURL}\nios link {self.iosURL}\nothers {self.otherURL} '

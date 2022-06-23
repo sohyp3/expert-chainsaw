@@ -12,5 +12,7 @@ with relational table
 `python3 manage.py makemigrations url_short`
 `python3 mange.py migrate`
 
-*the links name are dynamic in exception of the on in* `url_short/static/js/getinfo.js line:39` 
+*the links name are dynamic in exception of the on in* `url_short/static/js/getinfo.js : line:39` & `url_short/templates/main_view.html : line:13`
+
++ `url_short/tempates/url_short/edit_url.html` form is not dynamic either
 

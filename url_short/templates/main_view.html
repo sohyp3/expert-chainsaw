@@ -43,6 +43,7 @@
             <th> IOS Link</th>
             <th> Other Link</th>
             <th> Creation Time</th>
+            <th> additional notes </th>
             <th> Action</th>
         </tr>
     </thread>
@@ -57,6 +58,8 @@
                 <td>{{link.iosURL}}</td>
                 <td>{{link.otherURL}}</td>
                 <td> {{link.created_time}}</td>
+                <td>{{link.notes}}</td>
+                
                 <td>
                     <a href="{% url 'urls:edit' idd=link.id %}"> <img src="{% static 'media/edit_icon.svg' %}" height="20" alt ='edit'> </a>      
                     <a href="{% url 'urls:delete' idd=link.id %}"> <img src="{% static 'media/delete_icon.svg' %}" height="20" alt='delete'> </a>
