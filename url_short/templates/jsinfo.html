@@ -3,12 +3,13 @@
 {%block body%}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src={% static 'js/getinfo.js' %} defer></script>
-<meta http-equiv="refresh" content ="0.01; url ={{redirect_url}}"/>
+
+{% comment %} <meta http-equiv="refresh" content ="0.01; url ={{redirect_url}}"/> {% endcomment %}
 
 
 {% csrf_token %}
 
-
+<p hidden id="cID">{{cID}}<p>
 redirecting ..... <br> 
 if its not redirecting try refreshing the page.
 

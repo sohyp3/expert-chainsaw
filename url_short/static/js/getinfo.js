@@ -1,3 +1,4 @@
+console.log('work?')
 function getData()
 {
 

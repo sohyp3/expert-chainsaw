@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django_user_agents.utils import get_user_agent
+
 import random, string
+import csv
 
 from django.http import JsonResponse
 from django.db.models import Q
@@ -193,8 +195,8 @@ def delete(request,idd):
 def redirector(request,token):
 
     if linksModel.objects.filter(shortURL=token).count() == 0:
-        urls = linksModel.objects.first()
         redirected_url = "https://google.com"
+        current_id = 0
 
     else:
 
@@ -218,13 +220,14 @@ def redirector(request,token):
             redirected_url = urls.otherURL
 
         # taking the information from userData function and saving it to pythonUseragentModel 
-    userInfo = userData(request)
+        userInfo = userData(request)
 
-    save_to_db = pythonUseragentModel(incoming_link=urls,ip=userInfo['ip'],browser_type=userInfo['browser_type'],browser_version=userInfo['browser_version'],os_type=userInfo['os_type'],os_version=userInfo['os_version'],device_family=userInfo['device_family'],)
-    save_to_db.save()
-        
+        save_to_db = pythonUseragentModel(incoming_link=urls,ip=userInfo['ip'],browser_type=userInfo['browser_type'],browser_version=userInfo['browser_version'],os_type=userInfo['os_type'],os_version=userInfo['os_version'],device_family=userInfo['device_family'],)
+        save_to_db.save()
+        current_id = save_to_db.id
+
     # sending the link to HTML to redirect there || doing that to be able to run the javascript file to get the javascript useragent info   
-    return render(request, 'jsinfo.html',{'redirect_url':redirected_url},)
+    return render(request, 'jsinfo.html',{'redirect_url':redirected_url,'cID':current_id},)
 
 def userData(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -256,6 +259,7 @@ def create_token():
 
 
 def receive_js(request):
+    print('received smth')
     form = jsUseragentForm(request.POST or None)
 
     if is_ajax(request = request):
@@ -286,3 +290,38 @@ def receive_js(request):
 
 def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+
+
+def export(request):
+    linkData = linksModel.objects.all()
+    pyData = pythonUseragentModel.objects.all()
+    jsData = jsUseragentModel.objects.all()
+
+    response = HttpResponse(content_type='text/csv')
+    writer = csv.writer(response)
+
+    writer.writerow(['id','shortURL','windowsURL','macURL','androidURL','iosURL','otherURL','created_time'])
+    for link in linkData:
+        writer.writerow([link.id, link.shortURL,link.windowsURL,link.macURL,link.androidURL,link.iosURL,link.otherURL,link.created_time])
+
+
+    writer.writerow(['','','','','','','','','','','','','','']) #14
+    writer.writerow(['','','','','','','','','','','','','','']) #14
+    writer.writerow(['','','','','','','','','','','','','','']) #14
+   
+    writer.writerow(['id','ip','browser_type','browser_version','os_type','os_version','device_family','incoming_link','created_time'])
+    for pinfo in pyData:
+        writer.writerow([pinfo.id,pinfo.ip, pinfo.browser_type, pinfo.browser_version,pinfo.os_type,pinfo.os_version,pinfo.device_family,pinfo.incoming_link.shortURL,pinfo.created_time])
+
+
+    writer.writerow(['','','','','','','','','','','','','','']) #14
+    writer.writerow(['','','','','','','','','','','','','','']) #14
+    writer.writerow(['','','','','','','','','','','','','','']) #14
+   
+    writer.writerow(['id','Browser Name ','Browser Version','Browser Language','Cookies Enabled','Operating System','Useragent Header','UTC TimeZone','TZ Place','Screen Size','Battery Level','PreTable Connection','incoming link','Clicking Time'])
+    for jinfo in jsData:
+        writer.writerow([jinfo.id,jinfo.browser_codeName,jinfo.browser_version,jinfo.browser_language,jinfo.cookies_enabled,jinfo.platform,jinfo.user_agent_header,jinfo.timezone_utc,jinfo.timezone_place,jinfo.screen_size,jinfo.battery_level,jinfo.pyID.id,jinfo.pyID.incoming_link.shortURL,jinfo.created_time])
+
+
+    response ['Content-Disposition'] = 'attachment; filename= "data.csv"'
+    return response
