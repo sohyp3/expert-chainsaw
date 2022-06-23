@@ -3,7 +3,26 @@
 
 {%block body%}
 
-<button class ='exportbtn' > <a href="{% url 'urls:csv'%}"> Export </a> </button>
+<script> 
+
+    function confirmm() {
+        var user_choice = window.confirm('are you sure?? no take back\nbe carefull');
+        
+        if(user_choice==true) {
+        
+        window.location='/nuke';
+            } 
+        else {
+           return false;    
+         }
+        }
+</script>
+
+<div class = 'top-items'> 
+    <button class ='exportbtn' > <a href="{% url 'urls:csv'%}"> Export </a> </button>
+    <button onClick="confirmm()"> NUke </button>
+</div>
+
 
 <table>
     <br>

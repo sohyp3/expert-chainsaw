@@ -12,6 +12,7 @@ urlpatterns = [
     path('delete/<int:idd>',views.delete,name ='delete'),
     path('csv',views.export,name ='csv'),
     path('receive',views.receive_js,name="receive"),
+    path('nuke',views.nuke,name='nuke'),
 
     path('<str:token>', views.redirector, name = 'redirect')
 ]

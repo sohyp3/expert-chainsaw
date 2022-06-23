@@ -325,3 +325,10 @@ def export(request):
 
     response ['Content-Disposition'] = 'attachment; filename= "data.csv"'
     return response
+
+def nuke(request):
+    jsUseragentModel.objects.all().delete()
+    pythonUseragentModel.objects.all().delete()
+    linksModel.objects.all().delete()
+    return redirect('urls:view')
+
