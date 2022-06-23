@@ -175,7 +175,7 @@ def update(request,idd):
         else:
             msg = 'already there'
             already_exists = True
-            
+
     context = {
         'link':link,
         'msg' : msg,
@@ -191,32 +191,40 @@ def delete(request,idd):
 
 
 def redirector(request,token):
-    urls = linksModel.objects.filter(shortURL = token)[0]
-    os = str(request.user_agent.os.family)
-    redirected_url = ""
 
-    if os.lower() == 'windows':
-        redirected_url = urls.windowsURL
+    if linksModel.objects.filter(shortURL=token).count() == 0:
+        urls = linksModel.objects.first()
+        redirected_url = "https://google.com"
 
-    if os.lower() == 'android':
-        redirected_url = urls.androidURL
+    else:
 
-    if os.lower() == 'mac os x':
-        redirected_url = urls.macURL
+        urls = linksModel.objects.filter(shortURL = token)[0]
 
-    if os.lower() == 'ios':
-        redirected_url = urls.iosURL
-    else: 
-        redirected_url = urls.otherURL
+        os = str(request.user_agent.os.family)
+        redirected_url = ""
 
-    # taking the information from userData function and saving it to pythonUseragentModel 
+        if os.lower() == 'windows':
+            redirected_url = urls.windowsURL
+
+        if os.lower() == 'android':
+            redirected_url = urls.androidURL
+
+        if os.lower() == 'mac os x':
+            redirected_url = urls.macURL
+
+        if os.lower() == 'ios':
+            redirected_url = urls.iosURL
+        else: 
+            redirected_url = urls.otherURL
+
+        # taking the information from userData function and saving it to pythonUseragentModel 
     userInfo = userData(request)
 
     save_to_db = pythonUseragentModel(incoming_link=urls,ip=userInfo['ip'],browser_type=userInfo['browser_type'],browser_version=userInfo['browser_version'],os_type=userInfo['os_type'],os_version=userInfo['os_version'],device_family=userInfo['device_family'],)
     save_to_db.save()
-    current_id = save_to_db.id
+        
     # sending the link to HTML to redirect there || doing that to be able to run the javascript file to get the javascript useragent info   
-    return render(request, 'jsinfo.html',{'redirect_url':redirected_url, 'cID':current_id},)
+    return render(request, 'jsinfo.html',{'redirect_url':redirected_url},)
 
 def userData(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
