@@ -2,6 +2,10 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect, HttpResponse
 from django_user_agents.utils import get_user_agent
 
+from django.contrib.auth import login,logout, authenticate
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+
 import random, string
 import csv
 
@@ -12,7 +16,7 @@ from .forms import linkForm, jsUseragentForm
 from .models import linksModel, pythonUseragentModel, jsUseragentModel
 
 
-
+@login_required(login_url='urls:login')
 def create(request):
     short = ''
     already_exists = False
@@ -72,6 +76,7 @@ def create(request):
     
    # nice !
 
+@login_required(login_url='urls:login')
 def view(request): 
 
     searchingLink=''
@@ -125,10 +130,12 @@ def view(request):
    
 
 # idd is id
+@login_required(login_url='urls:login')
 def edit(request,idd):
     link = linksModel.objects.get(id=idd)
     return render(request,'url_short/edit_url.html',{'link':link})
 
+@login_required(login_url='urls:login')
 def update(request,idd):
     link = linksModel.objects.get(id=idd)
     form = linkForm(request.POST,instance=link)
@@ -188,7 +195,7 @@ def update(request,idd):
     }
 
     return render(request,'url_short/edit_url.html',context)
-
+@login_required(login_url='urls:login')
 def delete(request,idd):
     link = linksModel.objects.get(id=idd)
     link.delete()
@@ -255,6 +262,30 @@ def userData(request):
     return context
 
 
+
+def loginn(request):
+    if request.user.is_authenticated:
+        return redirect('urls:view')
+
+    else:
+        if request.method == 'POST':
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+
+            user = authenticate(username= username,password=password)
+            if user is not None:
+                login(user)
+                return redirect('urls:view')
+            else:
+                messages.info(request, 'wrong creds')
+        return render(request,'login.html')
+
+
+def logoutt(request):
+    logout(request)
+    return redirect('urls:login')
+
+
 def create_token():
     token_size = 5
     letters = string.ascii_letters
@@ -294,7 +325,7 @@ def receive_js(request):
 def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
 
-
+@login_required(login_url='urls:login')
 def export(request):
     linkData = linksModel.objects.all()
     pyData = pythonUseragentModel.objects.all()
@@ -328,7 +359,7 @@ def export(request):
 
     response ['Content-Disposition'] = 'attachment; filename= "data.csv"'
     return response
-
+@login_required(login_url='urls:login')
 def nuke(request):
     jsUseragentModel.objects.all().delete()
     pythonUseragentModel.objects.all().delete()

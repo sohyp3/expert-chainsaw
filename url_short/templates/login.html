@@ -1,0 +1,23 @@
+{% extends 'url_short/shortner_template.html' %}
+{% block body %}
+
+<h1>Login </h1>
+
+<form method='POST' action=''>
+    {% csrf_token %}
+    <div>
+         <input type='text' name='username' placeholder='Name'> 
+    </div>
+    <br>
+    <div>
+      <input type='password' name='password' placeholder ='Password..'>
+    </div>
+    <br>
+    <input type='submit' value = 'login'>
+</form>
+
+{%for message in messages%}
+    <p id='messages'>{{message}} </p>  
+{%endfor%}
+
+{% endblock body %}
