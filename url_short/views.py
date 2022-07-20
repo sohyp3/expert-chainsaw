@@ -274,7 +274,7 @@ def loginn(request):
 
             user = authenticate(username= username,password=password)
             if user is not None:
-                login(user)
+                login(request, user)
                 return redirect('urls:view')
             else:
                 messages.info(request, 'wrong creds')
