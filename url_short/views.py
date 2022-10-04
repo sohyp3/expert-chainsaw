@@ -33,14 +33,22 @@ def create(request):
             notes = form.cleaned_data['notes']
             short = request.POST.get('shortURL')
             password = request.POST.get('urlPass')
+            rangeSlider = request.POST.get('rangeSlider')
 
-        
+            rangeSlider = int(rangeSlider)
+            max_len = 5
+            if rangeSlider <= 50 and rangeSlider >0:
+                max_len = rangeSlider
+                print('h')
+
             if linksModel.objects.filter(shortURL=short).count() == 0:
-
-                if short == "" or short == None:
-                    short = create_token()
+                if short == "" or short == None:                        
+                    short = create_token(max_len)
                     if linksModel.objects.filter(shortURL=short).count() != 0:
-                        short = create_token()
+                        short = create_token(max_len)
+                        if linksModel.objects.filter(shortURL=short).count() != 0:
+                            short = create_token(max_len)                        
+
 
             # to not have an empty field saved to db
                 if other == '' or other ==' ':  
@@ -57,9 +65,7 @@ def create(request):
 
                 if windows =='':
                     windows = other
-                
-                print(f'\n\n\n  {password} \n\n\n')
-                 
+
                 save_to_db = linksModel(windowsURL=windows,shortURL=short,androidURL=android,macURL=mac,iosURL=ios,otherURL=other,notes=notes,password=password)
                 save_to_db.save()
             else: 
@@ -68,6 +74,7 @@ def create(request):
 
         else:
             short = 'an error happened!'
+# nice !
 
     context = {
         'form':linkForm(),
@@ -76,7 +83,6 @@ def create(request):
     }
     return render(request, "url_short/create_url.html", context)
     
-   # nice !
 
 @login_required(login_url='urls:login')
 def view(request): 
@@ -298,8 +304,8 @@ def logoutt(request):
     return redirect('urls:login')
 
 
-def create_token():
-    token_size = 5
+def create_token(size):
+    token_size = size
     letters = string.ascii_letters
     return "".join (random.choice(letters)for i in range (token_size))
 
@@ -337,10 +343,39 @@ def receive_p(request):
         pswd = request.POST.get('pswd')
         pyID = request.POST.get('pyID')
         entry = pythonUseragentModel.objects.get(id=pyID)
-        entry.knowPassword = True
-        entry.save()
 
-        return JsonResponse({'data':'done'},status=200)
+        dbPswd = entry.incoming_link.password
+        if pswd == dbPswd:
+            entry.knowPassword = True
+            entry.save()
+            
+            redirected_url = ""
+            os = str(request.user_agent.os.family)
+
+            if os.lower() == 'windows':
+                redirected_url = entry.incoming_link.windowsURL
+
+            if os.lower() == 'android':
+                redirected_url = entry.incoming_link.androidURL
+
+            if os.lower() == 'mac os x':
+                redirected_url = entry.incoming_link.macURL
+
+            if os.lower() == 'ios':
+                redirected_url = entry.incoming_link.iosURL
+            else: 
+                redirected_url = entry.incoming_link.otherURL
+
+            # redirecting in js
+            return JsonResponse({'data':redirected_url},status=200)
+            
+        else:
+            entry.knowPassword = False
+            entry.save()
+            return JsonResponse({'data':'fail'},status=200)
+
+        
+
 
 def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'

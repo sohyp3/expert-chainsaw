@@ -43,27 +43,44 @@ function getData()
         processData: false,
       });
       let pswd= document.getElementById("pswd").innerText
-      
+
       if (pswd =='p'){
-        let password = prompt('Enter Password:');
-        const pData=new FormData();
+        requestPassword();
 
-
-        pData.append('csrfmiddlewaretoken',csrf[0].value)
-        pData.append('pswd',password)
-        pData.append('pyID',idd)
-
-        $.ajax({
-          type: "POST",
-          url: "/receive_p",
-          enctype: 'multipart/form-data',
-          data : pData,
+      function requestPassword()
+      {
+          let password = prompt('Enter Password:');
+          const pData=new FormData();
   
-          cache: false,
-          contentType: false,
-          processData: false,          
-        })
+  
+          pData.append('csrfmiddlewaretoken',csrf[0].value)
+          pData.append('pswd',password)
+          pData.append('pyID',idd)
+  
+          $.ajax({
+            type: "POST",
+            url: "/receive_p",
+            enctype: 'multipart/form-data',
+            data : pData,
+            success : function (res) {
+              console.log(res)
+              if (res.data !='fail'){
+                window.location = res.data;
+              }
+              else{
+                alert('wrong password')
+                requestPassword();
+              }
+  
+            },
+            cache: false,
+            contentType: false,
+            processData: false,          
+          })
+        }
       }
+      
+      
 }
 getData()
 

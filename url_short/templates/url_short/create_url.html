@@ -33,18 +33,27 @@
             <br> 
             <hr>
     
- <label for="custom_short_url">Custom? </label>
+<label for="custom_short_url">Custom? </label>
     <input type='checkbox' name = 'custom_cb' id = 'custom_cb' onchange="control_field('custom_cb','id_shortURL')" >
     <input type="text" id="id_shortURL" name="shortURL" autocomplete='off' disabled><br>
-         
+
     
     <br>
     
     <label for="custom_short_url">Password? </label>
     <input type='checkbox' name = 'pass_cb' id = 'pass_cb' onchange="control_field('pass_cb','id_urlPass')" >
     <input type="text" id="id_urlPass" name="urlPass" autocomplete='off' disabled /><br>
-       
+    <br>
+
+    <div class="slider">
+        <input type="range" min="1" max="50" id="id_rangeSlider" name="rangeSlider" value="5" oninput="rangeValue.innerText = this.value" />
+        <p id="rangeValue">5</p>
+        </div>
+
     <input type='submit' id ='submit-input'> 
+
+
+
     </form>
 
 <h3> {{message}} </h3>
