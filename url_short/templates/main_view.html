@@ -48,6 +48,7 @@
             <th> Creation Time</th>
             <th> additional notes </th>
             <th> Action</th>
+            <th>Password?</th>
         </tr>
     </thread>
         <tbody>
@@ -55,7 +56,7 @@
             <tr>
                 <td> {{link.id}}</td>
                 <td>{{link.shortURL}}</td>
-                <td>{{link.windowsURL}}</td>
+                <td>{{link.windowsURL}}</td> 
                 <td>{{link.androidURL}}</td>
                 <td>{{link.macURL}}</td>
                 <td>{{link.iosURL}}</td>
@@ -66,6 +67,14 @@
                 <td>
                     <a href="{% url 'urls:edit' idd=link.id %}"> <img src="{% static 'media/edit_icon.svg' %}" height="20" alt ='edit'> </a>      
                     <a href="{% url 'urls:delete' idd=link.id %}"> <img src="{% static 'media/delete_icon.svg' %}" height="20" alt='delete'> </a>
+                </td>
+
+                <td>
+                    {%if link.password %}
+                    {{link.password}}
+                    {% else %}
+                    ::nAn:: 
+                    {%endif%}
                 </td>
 
             </tr>
@@ -102,7 +111,7 @@
             <th> device_family</th>
             <th> incoming link </th>
             <th> Clicking Time</th>
-
+            <th>used Password?</th>
             
         </tr>
     </thread>
@@ -118,6 +127,7 @@
                 <td>{{pinfo.device_family}}</td>
                 <td>{{pinfo.incoming_link.shortURL}}</td>
                 <td>{{pinfo.created_time}}</td>
+                <td>{{pinfo.knowPassword}}</td>
             </tr>
             {%endfor%}
         </tbody>
@@ -175,7 +185,6 @@
                 <td>{{jinfo.battery_level}}</td>
 
                 <td>{{jinfo.pyID.id}} </td>
-                {% comment %} <td>{{jinfo.incoming_link.shortURL}}</td> {% endcomment %}
 
                 <td>{{jinfo.pyID.incoming_link.shortURL}}</td>
                 <td>{{jinfo.created_time}}</td>

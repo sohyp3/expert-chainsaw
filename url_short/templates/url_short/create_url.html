@@ -13,14 +13,14 @@
 
 
 <script>
-    function control_field(){
-        var checked = document.getElementById('chustom_box').checked;
+    function control_field(cb_id, input_box){
+        var checked = document.getElementById(cb_id).checked;
         if (checked){
-            document.getElementById('id_shortURL').disabled = false
+            document.getElementById(input_box).disabled = false
         }
         else{
-            document.getElementById('id_shortURL').disabled =true
-            document.getElementById('id_shortURL').value = ''
+            document.getElementById(input_box).disabled =true
+            document.getElementById(input_box).value = ''
         }
     
     }
@@ -34,11 +34,17 @@
             <hr>
     
  <label for="custom_short_url">Custom? </label>
-    <input type='checkbox' name = 'custom_cb' id = 'chustom_box' onchange="control_field()" checked>
-    <input type="text" id="id_shortURL" name="shortURL" autocomplete='off'><br>
+    <input type='checkbox' name = 'custom_cb' id = 'custom_cb' onchange="control_field('custom_cb','id_shortURL')" >
+    <input type="text" id="id_shortURL" name="shortURL" autocomplete='off' disabled><br>
          
+    
+    <br>
+    
+    <label for="custom_short_url">Password? </label>
+    <input type='checkbox' name = 'pass_cb' id = 'pass_cb' onchange="control_field('pass_cb','id_urlPass')" >
+    <input type="text" id="id_urlPass" name="urlPass" autocomplete='off' disabled /><br>
+       
     <input type='submit' id ='submit-input'> 
-
     </form>
 
 <h3> {{message}} </h3>

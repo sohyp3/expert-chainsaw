@@ -15,7 +15,7 @@ urlpatterns = [
     path('delete/<int:idd>',views.delete,name ='delete'),
 
     path('receive',views.receive_js,name="receive"),
-    
+    path('receive_p',views.receive_p,name='receive_p'),
     path('csv',views.export,name ='csv'),
     path('nuke',views.nuke,name='nuke'),
 

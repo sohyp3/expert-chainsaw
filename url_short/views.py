@@ -32,6 +32,7 @@ def create(request):
             other = form.cleaned_data['otherURL']
             notes = form.cleaned_data['notes']
             short = request.POST.get('shortURL')
+            password = request.POST.get('urlPass')
 
         
             if linksModel.objects.filter(shortURL=short).count() == 0:
@@ -57,8 +58,9 @@ def create(request):
                 if windows =='':
                     windows = other
                 
-                
-                save_to_db = linksModel(windowsURL=windows,shortURL=short,androidURL=android,macURL=mac,iosURL=ios,otherURL=other,notes=notes)
+                print(f'\n\n\n  {password} \n\n\n')
+                 
+                save_to_db = linksModel(windowsURL=windows,shortURL=short,androidURL=android,macURL=mac,iosURL=ios,otherURL=other,notes=notes,password=password)
                 save_to_db.save()
             else: 
                 short = 'Already There'
@@ -203,15 +205,16 @@ def delete(request,idd):
 
 
 def redirector(request,token):
+    passworded = False
 
     if linksModel.objects.filter(shortURL=token).count() == 0:
         redirected_url = "https://google.com"
         current_id = 0
+        
 
     else:
-
+        
         urls = linksModel.objects.filter(shortURL = token)[0]
-
         os = str(request.user_agent.os.family)
         redirected_url = ""
 
@@ -232,12 +235,20 @@ def redirector(request,token):
         # taking the information from userData function and saving it to pythonUseragentModel 
         userInfo = userData(request)
 
+        if urls.password:
+            passworded= True
+
         save_to_db = pythonUseragentModel(incoming_link=urls,ip=userInfo['ip'],browser_type=userInfo['browser_type'],browser_version=userInfo['browser_version'],os_type=userInfo['os_type'],os_version=userInfo['os_version'],device_family=userInfo['device_family'],)
         save_to_db.save()
         current_id = save_to_db.id
 
-    # sending the link to HTML to redirect there || doing that to be able to run the javascript file to get the javascript useragent info   
-    return render(request, 'jsinfo.html',{'redirect_url':redirected_url,'cID':current_id},)
+
+    if not passworded:
+            # sending the link to HTML to redirect there || doing that to be able to run the javascript file to get the javascript useragent info   
+        return render(request, 'jsinfo.html',{'redirect_url':redirected_url,'cID':current_id},)
+    else:
+        return render(request, 'jsinfowP.html',{'cID':current_id,'pswd':'p'})
+
 
 def userData(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -245,12 +256,13 @@ def userData(request):
         ip = x_forwarded_for.split(',')[0]
     else:
         ip = request.META.get('REMOTE_ADDR')
-
     browser_type = request.user_agent.browser.family
     browser_version = request.user_agent.browser.version_string
     os_type = request.user_agent.os.family
+
     os_version = request.user_agent.os.version_string
     device_type = request.user_agent.device.family
+
     context = {
         "ip": ip,
         "browser_type": browser_type,
@@ -293,7 +305,6 @@ def create_token():
 
 
 def receive_js(request):
-    print('received smth')
     form = jsUseragentForm(request.POST or None)
 
     if is_ajax(request = request):
@@ -318,9 +329,18 @@ def receive_js(request):
 
             save_to_db = jsUseragentModel(browser_codeName=browser_codeName,browser_version=browser_version,browser_language=browser_language,cookies_enabled=cookies_enabled,platform=platform,user_agent_header=user_agent_header,timezone_utc=timezone_utc,timezone_place=timezone_place,screen_size=screen_size,battery_level=battery_level,pyID=pyinfo)
             save_to_db.save()
-            return "" 
-        return ""
+        return JsonResponse({'data':'done'},status=200)
 
+
+def receive_p(request):
+    if is_ajax(request=request):
+        pswd = request.POST.get('pswd')
+        pyID = request.POST.get('pyID')
+        entry = pythonUseragentModel.objects.get(id=pyID)
+        entry.knowPassword = True
+        entry.save()
+
+        return JsonResponse({'data':'done'},status=200)
 
 def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'

